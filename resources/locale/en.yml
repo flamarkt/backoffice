@@ -1,0 +1,24 @@
+flamarkt-backoffice:
+    admin:
+        settingsInBackoffice: Settings in backoffice
+
+    backoffice:
+        settingsNotAvailableForNonAdmin: This extension has settings, but only admin accounts can see and edit them.
+        nav:
+            dashboard: Dashboard
+            users: Users
+            searchPlaceholder: => core.admin.nav.search_placeholder
+        users:
+            title: Users
+            new: Create user
+            head:
+                email: Email
+            field:
+                username: Username
+                email: Email
+                password: Password
+        permissions:
+            backoffice: Use backoffice
+    forum:
+        nav:
+            backoffice: Backoffice

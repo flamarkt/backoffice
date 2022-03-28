@@ -1,0 +1,50 @@
+{
+    "name": "flamarkt/backoffice",
+    "description": "Starting point for Flamarkt extensions.",
+    "keywords": [
+        "flarum",
+        "flamarkt",
+        "backoffice",
+        "admin",
+        "panel"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": "^1.2",
+        "ext-json": "*"
+    },
+    "authors": [
+        {
+            "name": "Flamarkt",
+            "homepage": "https://flamarkt.org/"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/flamarkt/backoffice/issues",
+        "source": "https://github.com/flamarkt/backoffice"
+    },
+    "autoload": {
+        "psr-4": {
+            "Flamarkt\\Backoffice\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Backoffice",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-tachometer-alt",
+                "backgroundColor": "#266a13",
+                "color": "#fff"
+            }
+        },
+        "flamarkt-backoffice": {
+            "settingsInBackoffice": true,
+            "showInBackoffice": true
+        },
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}

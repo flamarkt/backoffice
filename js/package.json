@@ -1,0 +1,16 @@
+{
+    "name": "@flamarkt/backoffice",
+    "private": true,
+    "dependencies": {
+        "flarum-tsconfig": "^1.0",
+        "flarum-webpack-config": "^2.0",
+        "webpack": "^5.65",
+        "webpack-cli": "^4.9"
+    },
+    "scripts": {
+        "dev": "webpack --mode development --watch",
+        "build": "webpack --mode production",
+        "clean-typings": "npx rimraf dist-typings && mkdir dist-typings",
+        "build-typings": "npm run clean-typings && tsc"
+    }
+}
