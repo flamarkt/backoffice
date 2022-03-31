@@ -24,13 +24,15 @@ export default class BackofficeNav extends AdminNav {
             icon: 'far fa-chart-bar',
         }, app.translator.trans('flamarkt-backoffice.backoffice.nav.dashboard')), 80);
 
-        items.add('users', ActiveLinkButton.component({
-            href: app.route('users.index'),
-            icon: 'fas fa-user',
-            activeRoutes: [
-                'users.*',
-            ],
-        }, app.translator.trans('flamarkt-backoffice.backoffice.nav.users')), 60);
+        if (app.forum.attribute('canSearchUsers')) {
+            items.add('users', ActiveLinkButton.component({
+                href: app.route('users.index'),
+                icon: 'fas fa-user',
+                activeRoutes: [
+                    'users.*',
+                ],
+            }, app.translator.trans('flamarkt-backoffice.backoffice.nav.users')), 60);
+        }
 
         items.add('search', m('.Search-input', m('input.FormControl.SearchBar', {
             type: 'search',
