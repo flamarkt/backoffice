@@ -4,8 +4,6 @@ namespace Flamarkt\Backoffice;
 
 use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Extend;
-use Flarum\Frontend\Document;
-use Illuminate\Support\Arr;
 
 return [
     // It's important for the provider to run before we call the Frontend extender with our new frontend
@@ -15,19 +13,10 @@ return [
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__ . '/js/dist/admin.js')
-        ->content(function (Document $document) {
-            if (!$document->payload['extensions']) {
-                return;
-            }
-
-            foreach ($document->payload['extensions'] as $key => $attributes) {
-                if (Arr::get($attributes, 'extra.flamarkt-backoffice.hideFromAdmin')) {
-                    unset($document->payload['extensions'][$key]);
-                }
-            }
-        }),
+        ->content(Content\FilterAdminPayload::class),
 
     (new Extend\Frontend('backoffice'))
+        ->content(Content\FilterBackofficePayload::class)
         //->js(__DIR__ . '/js/dist/backoffice.js')
         ->css(__DIR__ . '/resources/less/backoffice.less')
         ->route('/dashboard', 'dashboard', Content\Dashboard::class)

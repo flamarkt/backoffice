@@ -16,7 +16,7 @@ app.initializers.add('flamarkt-backoffice', () => {
                 icon: 'fas fa-tachometer-alt',
                 href: app.forum.attribute('backofficeUrl'),
                 target: '_blank',
-            }, app.translator.trans('flamarkt-backoffice.forum.nav.backoffice')));
+            }, app.translator.trans('flamarkt-backoffice.lib.header.backoffice_button')));
         }
     });
 });

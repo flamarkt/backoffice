@@ -9,6 +9,6 @@ class GlobalPolicy extends AbstractPolicy
 {
     public function backoffice(User $actor)
     {
-        return $actor->isAdmin();
+        return $actor->hasPermission('backoffice');
     }
 }
