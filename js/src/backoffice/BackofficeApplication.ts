@@ -16,9 +16,12 @@ export default class BackofficeApplication extends Application {
         canGoBack: () => true,
         getPrevious: () => {
         },
-        backUrl: () => this.forum.attribute('baseUrl'),
+        // Ideally this would go back to the forum homepage
+        // But just like with Flarum's own admin, the displayed link is used as a relative path in the constructed URL
+        // the back() function would work, but for consistency let's have both redirect to the backoffice home for now
+        backUrl: () => '/',
         back: function () {
-            window.location = this.backUrl() as any;
+            m.route.set('/');
         },
     };
 
@@ -27,19 +30,22 @@ export default class BackofficeApplication extends Application {
     constructor() {
         super();
 
-        routes(this);
+        // Extensions might already have started adding initializers in the admin frontend so we need to copy them over
+        this.initializers = app.initializers;
 
         // This value is used through the flarum/common/app proxy object
         // I haven't figured out why it's not using the new window.app object
         // The easiest solution is just to have the same store instance used by both
-        app.store = this.store;
+        this.store = app.store;
 
         // This value is read from ExtensionPage
-        app.extensionData = this.extensionData;
+        this.extensionData = app.extensionData;
 
         // This value seems to be used somewhere when using the ActiveLinkButton
         // Also necessary if registering routes through the flarum/common/app proxy object
-        app.routes = this.routes;
+        this.routes = app.routes;
+
+        routes(this);
     }
 
     mount() {

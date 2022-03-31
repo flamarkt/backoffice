@@ -3,8 +3,7 @@ import {extend} from 'flarum/common/extend';
 import SessionDropdown from 'flarum/forum/components/SessionDropdown';
 import LinkButton from 'flarum/common/components/LinkButton';
 import {common} from '../common/compat';
-import patchModelHasOneNull from '../common/patchModelHasOneNull';
-import patchStoreAllowVerbatimRelationships from '../common/patchStoreAllowVerbatimRelationships';
+import registerPatchInitializer from '../common/registerPatchInitializer';
 
 export {
     common,
@@ -22,7 +21,4 @@ app.initializers.add('flamarkt-backoffice', () => {
     });
 });
 
-app.initializers.add('flamarkt-backoffice-patch', () => {
-    patchModelHasOneNull();
-    patchStoreAllowVerbatimRelationships();
-}, 100);
+registerPatchInitializer();

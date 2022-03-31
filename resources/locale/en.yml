@@ -19,6 +19,7 @@ flamarkt-backoffice:
                 password: Password
         permissions:
             backoffice: Use backoffice
-    forum:
-        nav:
-            backoffice: Backoffice
+    lib:
+        header:
+            admin_button: => core.forum.header.admin_button
+            backoffice_button: Backoffice
