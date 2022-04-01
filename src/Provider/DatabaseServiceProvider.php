@@ -24,6 +24,14 @@ class DatabaseServiceProvider extends AbstractServiceProvider
             $this->container->forgetInstance(ExtensionManager::class);
         });
 
+        // ToggleExtensionHandler doesn't exist in Flarum 1.0, so we need an alternative
+        $this->container->beforeResolving(\Flarum\Api\Controller\UpdateExtensionController::class, function () {
+            $this->container->forgetInstance(ExtensionManager::class);
+        });
+        $this->container->beforeResolving(\Flarum\Admin\Controller\UpdateExtensionController::class, function () {
+            $this->container->forgetInstance(ExtensionManager::class);
+        });
+
         // This handles MigrateCommand where Migrator is first and ExtensionManager second
         $this->container->afterResolving(Migrator::class, function () {
             $this->container->forgetInstance(ExtensionManager::class);
