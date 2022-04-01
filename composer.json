@@ -22,7 +22,8 @@
     ],
     "support": {
         "issues": "https://github.com/flamarkt/backoffice/issues",
-        "source": "https://github.com/flamarkt/backoffice"
+        "source": "https://github.com/flamarkt/backoffice",
+        "forum": "https://discuss.flarum.org/d/30498"
     },
     "autoload": {
         "psr-4": {
