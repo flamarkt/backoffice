@@ -20,6 +20,7 @@ Things this extension provides:
 - `common/components/Sortable`: a Mithril implementation of a re-orderable list.
 - `common/components/SortableHandle`: to be used with `Sortable`.
 - `common/components/UserRelationshipSelect`: implementation of `AbstractRelationshipSelect` for user model.
+- `backoffice/app`: the app object reference for `backoffice` frontend.
 - `backoffice/states/UserListState`
 - `backoffice/resolvers/ExtensionPageResolver`: same as Flarum but exported.
 - `backoffice/pages/DashboardPage`
@@ -35,6 +36,11 @@ Things this extension provides:
 - `backoffice/components/UserList`: implementation of `AbstractList` for `UserIndexPage`.
 - `backoffice/components/UserSortDropdown`: implementation of `AbstractSortDropdown` for user model.
 - Optional migrations through `when` callback in migration definition.
+
+To compile the new frontend and import the classes, you'll need to update your `webpack.config.js`.
+See other Flamarkt extensions for an example.
+
+Note: because exports use the package name followed by the frontend name, `backoffice` is repeated in some exports, for example: `import 'flamarkt/backoffice/backoffice/app';`.
 
 This package is implemented as an extension because it's the most reliable way to make sure all the logic runs only once and before any of the extensions that will use it.
 
