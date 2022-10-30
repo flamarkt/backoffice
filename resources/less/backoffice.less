@@ -63,3 +63,21 @@
 .ExtensionPage-header .Checkbox.disabled {
     opacity: 0.5;
 }
+
+.BackofficeListFilters {
+    display: flex;
+    margin: 8px 0;
+
+    > * {
+        margin-right: 5px;
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+}
+
+// The separator is not actually visible, it just serves to separate the content between left and right via flex
+.BackofficeListFilters--separator {
+    margin-right: auto;
+}

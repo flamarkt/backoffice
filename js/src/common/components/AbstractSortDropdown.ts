@@ -6,7 +6,11 @@ import Model from 'flarum/common/Model';
 import AbstractListState from '../states/AbstractListState';
 
 export interface SortDropdownAttrs extends ComponentAttrs {
+    /**
+     * @deprecated use `list` instead
+     */
     state: AbstractListState<Model>
+    list: AbstractListState<Model>
     updateUrl?: boolean
 }
 
@@ -15,6 +19,13 @@ export interface SortOptions {
 }
 
 export default abstract class AbstractSortDropdown<T extends SortDropdownAttrs> extends Component<T> {
+    protected static initAttrs<T extends SortDropdownAttrs>(attrs: T) {
+        if (attrs.state) {
+            console.warn('SortDropdownAttrs.state is deprecated, use .list');
+            attrs.list = attrs.state;
+        }
+    }
+
     view() {
         const options = this.options();
 
@@ -24,6 +35,7 @@ export default abstract class AbstractSortDropdown<T extends SortDropdownAttrs> 
             className: 'SortDropdown ' + this.className(),
             buttonClassName: 'Button',
             label: options[activeSort],
+            icon: 'fas fa-sort-amount-' + (this.sortIsUp(activeSort) ? 'up' : 'down'),
         }, Object.keys(options).map((value) => {
             const label = options[value];
             const active = value === this.activeSort();
@@ -43,7 +55,11 @@ export default abstract class AbstractSortDropdown<T extends SortDropdownAttrs> 
     }
 
     activeSort(): string {
-        return this.attrs.state.params.sort || this.defaultSort();
+        return this.attrs.list.params.sort || this.defaultSort();
+    }
+
+    sortIsUp(sort: string) {
+        return sort.substr(0, 1) !== '-';
     }
 
     applySort(sort: string) {
@@ -51,10 +67,10 @@ export default abstract class AbstractSortDropdown<T extends SortDropdownAttrs> 
         const params = {...m.route.param()};
 
         if (this.defaultSort() === sort) {
-            delete this.attrs.state.params.sort;
+            delete this.attrs.list.params.sort;
             delete params.sort;
         } else {
-            this.attrs.state.params.sort = sort;
+            this.attrs.list.params.sort = sort;
             params.sort = sort;
         }
 
@@ -66,7 +82,7 @@ export default abstract class AbstractSortDropdown<T extends SortDropdownAttrs> 
 
             m.route.set(app.route(routeName, params));
         } else {
-            this.attrs.state.refresh();
+            this.attrs.list.refresh();
         }
     }
 

@@ -10,52 +10,71 @@ import app from '../app';
 import AbstractListState from '../../common/states/AbstractListState';
 
 export interface AbstractListAttrs<T extends Model> extends ComponentAttrs {
+    /**
+     * @deprecated use `list` instead
+     */
     state: AbstractListState<T>
+    list: AbstractListState<T>
 }
 
 export default class AbstractList<T extends Model> extends Component<AbstractListAttrs<T>> {
-    items(state: AbstractListState<T>): T[] {
-        return ([] as T[]).concat(...state.pages.map(page => page.items));
+    protected static initAttrs<T extends Model>(attrs: AbstractListAttrs<T>) {
+        Component.initAttrs(attrs);
+
+        if (attrs.state) {
+            console.warn('AbstractListAttrs.state is deprecated, use .list');
+            attrs.list = attrs.state;
+        }
     }
 
-    topRow(state: AbstractListState<T>) {
+    items(list: AbstractListState<T>): T[] {
+        return ([] as T[]).concat(...list.pages.map(page => page.items));
+    }
+
+    topRow(list: AbstractListState<T>) {
         return null;
     }
 
-    bottomRowContent(state: AbstractListState<T>) {
-        if (state.loading) {
+    bottomRowContent(list: AbstractListState<T>) {
+        if (list.loading) {
             return LoadingIndicator.component();
-        } else if (state.moreResults) {
+        } else if (list.moreResults) {
             return Button.component({
                 className: 'Button',
-                onclick: state.loadMore.bind(state),
+                onclick: list.loadMore.bind(list),
             }, app.translator.trans('load-more')); // TODO: actual translation key
         }
 
-        if (state.pages.length === 0 && !state.loading) {
+        if (list.pages.length === 0 && !list.loading) {
             return Placeholder.component({
                 text: app.translator.trans('empty'), // TODO: actual translation key
             });
         }
     }
 
-    bottomRow(state: AbstractListState<T>) {
-        const content = this.bottomRowContent(state);
+    bottomRow(list: AbstractListState<T>) {
+        const content = this.bottomRowContent(list);
 
         return content ? m('tr', m('td', {
             colspan: 100,
         }, content)) : null;
     }
 
-    view(vnode: Vnode<AbstractListAttrs<T>>) {
-        const {state} = vnode.attrs;
+    tableClassName() {
+        return '';
+    }
 
-        return m('table.Table', [
+    view(vnode: Vnode<AbstractListAttrs<T>>) {
+        const {list} = vnode.attrs;
+
+        return m('table.Table.ListTable', {
+            className: this.tableClassName(),
+        }, [
             m('thead', m('tr', this.head().toArray())),
             m('tbody', [
-                this.topRow(state),
-                this.items(state).map(model => this.row(model)),
-                this.bottomRow(state),
+                this.topRow(list),
+                this.items(list).map(model => this.row(model)),
+                this.bottomRow(list),
             ]),
         ]);
     }
