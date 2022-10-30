@@ -1,15 +1,10 @@
+import { Children } from 'mithril';
+import Component from 'flarum/common/Component';
+import ItemList from 'flarum/common/utils/ItemList';
 /**
- * The `HeaderSecondary` component displays secondary header controls.
+ * Works the same way as Flarum admin's HeaderSecondary
  */
-export default class HeaderSecondary extends Component<any, undefined> {
-    constructor();
-    view(): JSX.Element;
-    /**
-     * Build an item list for the controls.
-     *
-     * @return {ItemList}
-     */
-    items(): ItemList<any>;
+export default class HeaderSecondary extends Component {
+    view(): any;
+    items(): ItemList<Children>;
 }
-import Component from "flarum/common/Component";
-import ItemList from "flarum/common/utils/ItemList";

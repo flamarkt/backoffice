@@ -1,17 +1,10 @@
+import { Children } from 'mithril';
+import Component from 'flarum/common/Component';
+import ItemList from 'flarum/common/utils/ItemList';
 /**
- * The `HeaderPrimary` component displays primary header controls. On the
- * default skin, these are shown just to the right of the forum title.
+ * Works the same way as Flarum admin's HeaderPrimary
  */
-export default class HeaderPrimary extends Component<any, undefined> {
-    constructor();
-    view(): JSX.Element;
-    config(isInitialized: any, context: any): void;
-    /**
-     * Build an item list for the controls.
-     *
-     * @return {ItemList}
-     */
-    items(): ItemList<any>;
+export default class HeaderPrimary extends Component {
+    view(): any;
+    items(): ItemList<Children>;
 }
-import Component from "flarum/common/Component";
-import ItemList from "flarum/common/utils/ItemList";

@@ -5,7 +5,7 @@ export default class BackofficeApplication extends Application {
     history: {
         canGoBack: () => boolean;
         getPrevious: () => void;
-        backUrl: () => unknown;
+        backUrl: () => string;
         back: () => void;
     };
     constructor();
