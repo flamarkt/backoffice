@@ -5,9 +5,12 @@ import KeyboardNavigatable from '../utils/KeyboardNavigatable';
 import ItemList from 'flarum/common/utils/ItemList';
 export interface RelationshipSelectAttrs<T> extends ComponentAttrs {
     relationship: T | T[] | null;
-    hasOne: boolean;
-    onchange: (value: T | T[] | null) => {};
+    hasOne?: boolean;
+    onchange?: (value: T | T[] | null) => {};
     placeholder?: string;
+    suggest?: T | T[] | (() => Promise<T | T[]>);
+    disabled?: boolean;
+    readonly?: boolean;
 }
 export default abstract class AbstractRelationshipSelect<T extends Model> extends Component<RelationshipSelectAttrs<T>> {
     searchFilter: string;
@@ -18,6 +21,8 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
     navigator: KeyboardNavigatable;
     dropdownIsFocused: boolean;
     onmousedown: (event: Event) => void;
+    cachedSuggestedResults: T[] | null;
+    suggestedPromiseLoaded: boolean;
     className(): string;
     abstract search(query: string): Promise<void>;
     abstract results(query: string): T[] | null;
@@ -42,4 +47,14 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
     getDomElement(index: number): JQuery<HTMLElement>;
     setIndex(index: number, scrollToItem: boolean): void;
     onready(): void;
+    /**
+     * Whether the dropdown should open above the field instead of below
+     */
+    directionUp(): boolean;
+    /**
+     * Shortcut to be used in the results() implementation to render the suggestions.
+     * If the suggestion is a function, its resulting Promise will be executed and the Select will redraw once results are available.
+     * If there are zero suggestions, null will be returned to show the spinner identically to a Select without suggestions.
+     */
+    suggestedResults(): T[] | null;
 }

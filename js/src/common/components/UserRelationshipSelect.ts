@@ -19,7 +19,7 @@ export default class UserRelationshipSelect extends AbstractRelationshipSelect<U
         }
 
         return app.store
-            .find('users', {
+            .find<User[]>('users', {
                 filter: {q: query},
                 page: {limit: 5},
             })
@@ -31,7 +31,7 @@ export default class UserRelationshipSelect extends AbstractRelationshipSelect<U
 
     results(query: string) {
         if (!query) {
-            return [];
+            return this.suggestedResults();
         }
 
         query = query.toLowerCase();

@@ -25,7 +25,8 @@ return [
         ->route('/extension/{id:[a-zA-Z0-9_-]+}', 'extension'),
 
     (new Extend\Frontend('forum'))
-        ->js(__DIR__ . '/js/dist/forum.js'),
+        ->js(__DIR__ . '/js/dist/forum.js')
+        ->css(__DIR__ . '/resources/less/forum.less'),
 
     new Extend\Locales(__DIR__ . '/resources/locale'),
 

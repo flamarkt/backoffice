@@ -8,9 +8,12 @@ import ItemList from 'flarum/common/utils/ItemList';
 
 export interface RelationshipSelectAttrs<T> extends ComponentAttrs {
     relationship: T | T[] | null
-    hasOne: boolean
-    onchange: (value: T | T[] | null) => {},
+    hasOne?: boolean
+    onchange?: (value: T | T[] | null) => {},
     placeholder?: string
+    suggest?: T | T[] | (() => Promise<T | T[]>)
+    disabled?: boolean
+    readonly?: boolean
 }
 
 export default abstract class AbstractRelationshipSelect<T extends Model> extends Component<RelationshipSelectAttrs<T>> {
@@ -22,6 +25,8 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
     navigator!: KeyboardNavigatable;
     dropdownIsFocused: boolean = false
     onmousedown!: (event: Event) => void
+    cachedSuggestedResults: T[] | null = null
+    suggestedPromiseLoaded: boolean = false
 
     className(): string {
         return '';
@@ -46,6 +51,10 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
     }
 
     setValue(models: T[]) {
+        if (!this.attrs.onchange) {
+            return;
+        }
+
         if (this.attrs.hasOne) {
             this.attrs.onchange(models.length ? models[0] : null);
         } else {
@@ -149,11 +158,24 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
     }
 
     view() {
+        const results = this.results(this.debouncedSearchFilter);
+
+        const directionUp = this.directionUp();
+
+        if (directionUp) {
+            results?.reverse();
+        }
+
         return m('.RelationshipSelect', {
-            className: this.className(),
+            className: classList(this.className(), {
+                focused: this.inputIsFocused,
+                disabled: this.attrs.disabled,
+                readonly: this.attrs.readonly,
+                'direction-up': directionUp,
+            }),
         }, [
             m('.RelationshipSelect-Form', this.formItems().toArray()),
-            this.listAvailableModels(this.results(this.debouncedSearchFilter)),
+            this.listAvailableModels(results),
         ]);
     }
 
@@ -161,7 +183,9 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
         const items = new ItemList();
 
         items.add('input', m('.RelationshipSelect-FakeInput-Wrapper', m('.RelationshipSelect-FakeInput.FormControl', {
-            className: this.inputIsFocused ? 'focus' : '',
+            className: classList({
+                focus: this.inputIsFocused, // deprecated. Check for .focused on .RelationshipSelect
+            }),
         }, this.inputItems().toArray())), 20);
 
         return items;
@@ -173,6 +197,10 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
         items.add('selected', this.normalizedValue().map(model => {
             return m('span.RelationshipSelect-Selected', {
                 onclick: () => {
+                    if (this.attrs.disabled || this.attrs.readonly) {
+                        return;
+                    }
+
                     this.toggleModel(model);
                     this.onready();
                 },
@@ -191,12 +219,14 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
                 this.searchDebouncer = setTimeout(() => {
                     this.debouncedSearchFilter = this.searchFilter;
                     this.search(this.debouncedSearchFilter);
-                }, 300);
+                }, 300) as any;
             },
             onkeydown: this.navigator.navigate.bind(this.navigator),
             // Use local methods so that other extensions can extend behaviour
             onfocus: this.oninputfocus.bind(this),
             onblur: this.oninputblur.bind(this),
+            disabled: this.attrs.disabled,
+            readonly: this.attrs.readonly,
         }), 10);
 
         return items;
@@ -327,5 +357,62 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
 
     onready() {
         this.$('input').first().focus().select();
+    }
+
+    /**
+     * Whether the dropdown should open above the field instead of below
+     */
+    directionUp(): boolean {
+        if (!(this.element instanceof HTMLElement)) {
+            return false;
+        }
+
+        const bounding = this.element.getBoundingClientRect();
+
+        const spaceAvailableBelow = window.innerHeight - bounding.bottom;
+
+        return spaceAvailableBelow < 200;
+    }
+
+    /**
+     * Shortcut to be used in the results() implementation to render the suggestions.
+     * If the suggestion is a function, its resulting Promise will be executed and the Select will redraw once results are available.
+     * If there are zero suggestions, null will be returned to show the spinner identically to a Select without suggestions.
+     */
+    suggestedResults(): T[] | null {
+        if (!this.attrs.suggest) {
+            return null;
+        }
+
+        if (typeof this.attrs.suggest === 'function') {
+            if (!this.suggestedPromiseLoaded) {
+                this.suggestedPromiseLoaded = true;
+
+                this.attrs.suggest().then(results => {
+                    if (Array.isArray(results)) {
+                        if (results.length) {
+                            this.cachedSuggestedResults = results;
+                        }
+                    } else if (results) {
+                        this.cachedSuggestedResults = [results];
+                    }
+
+                    m.redraw();
+                });
+            }
+
+            return this.cachedSuggestedResults;
+        }
+
+        if (!Array.isArray(this.attrs.suggest)) {
+            // No need to check for falsy, it was already done at the beginning
+            return [this.attrs.suggest];
+        }
+
+        if (this.attrs.suggest.length) {
+            return this.attrs.suggest;
+        }
+
+        return null;
     }
 }
