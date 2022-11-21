@@ -24,7 +24,7 @@ export default class UserRelationshipSelect extends AbstractRelationshipSelect<U
                 page: {limit: 5},
             })
             .then((results) => {
-                this.resultsCache.set(query, results);
+                this.resultsCache.set(query.toLowerCase(), results);
                 m.redraw();
             });
     }
