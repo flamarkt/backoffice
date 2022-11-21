@@ -81,6 +81,11 @@
 }
 
 .UserRelationshipSelect {
+    // Prevent the input from spanning too many lines if avatar and username split
+    .RelationshipSelect-Selected {
+        white-space: nowrap;
+    }
+
     .Avatar {
         .Avatar--size(24px);
         margin-right: 5px;
