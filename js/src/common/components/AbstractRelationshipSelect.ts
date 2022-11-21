@@ -27,6 +27,8 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
     onmousedown!: (event: Event) => void
     cachedSuggestedResults: T[] | null = null
     suggestedPromiseLoaded: boolean = false
+    shouldShowSuggestions: boolean = true
+    afterSelectionCooldown: boolean = false
 
     className(): string {
         return '';
@@ -202,7 +204,6 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
                     }
 
                     this.toggleModel(model);
-                    this.onready();
                 },
             }, this.item(model));
         }), 20);
@@ -213,6 +214,8 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
             oninput: (event: Event) => {
                 this.searchFilter = (event.target as HTMLInputElement).value;
                 this.activeListIndex = 0;
+                // So that typing and then erasing text brings back the suggestions
+                this.shouldShowSuggestions = true;
 
                 clearTimeout(this.searchDebouncer);
 
@@ -225,6 +228,10 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
             // Use local methods so that other extensions can extend behaviour
             onfocus: this.oninputfocus.bind(this),
             onblur: this.oninputblur.bind(this),
+            onclick: () => {
+                // Even if you are already focused on the input, clicking should bring back the suggestions
+                this.shouldShowSuggestions = true;
+            },
             disabled: this.attrs.disabled,
             readonly: this.attrs.readonly,
         }), 10);
@@ -234,6 +241,14 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
 
     oninputfocus() {
         this.inputIsFocused = true;
+
+        // The special dropdown focus is meant to make mouse interaction more intuitive. As soon as the keyboard is back in focus
+        // we can reset that value so that exiting the input through keyboard correctly hides the dropdown
+        this.dropdownIsFocused = false;
+
+        if (!this.afterSelectionCooldown) {
+            this.shouldShowSuggestions = true;
+        }
 
         // If we click or move to the input without typing anything, we want to autocomplete the empty query
         if (this.debouncedSearchFilter === '') {
@@ -294,6 +309,13 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
             this.activeListIndex = 0;
         }
 
+        this.shouldShowSuggestions = false;
+        this.afterSelectionCooldown = true;
+
+        setTimeout(() => {
+            this.afterSelectionCooldown = false;
+        }, 300);
+
         // Defer re-focusing to next browser draw
         setTimeout(() => {
             this.onready();
@@ -333,6 +355,9 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
         const $item = this.getDomElement(index);
         this.activeListIndex = index;
 
+        // Make it so pressing up or down on an empty field will show the suggestions again
+        this.shouldShowSuggestions = true;
+
         m.redraw();
 
         if (scrollToItem) {
@@ -356,6 +381,11 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
     }
 
     onready() {
+        // On touch-enabled devices, don't automatically re-focus the field as it's annoying when it constantly brings back the virtual keyboard
+        if ('ontouchstart' in document.documentElement) {
+            return;
+        }
+
         this.$('input').first().focus().select();
     }
 
@@ -380,8 +410,8 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
      * If there are zero suggestions, null will be returned to show the spinner identically to a Select without suggestions.
      */
     suggestedResults(): T[] | null {
-        if (!this.attrs.suggest) {
-            return null;
+        if (!this.attrs.suggest || !this.shouldShowSuggestions) {
+            return [];
         }
 
         if (typeof this.attrs.suggest === 'function') {
@@ -404,15 +434,11 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
             return this.cachedSuggestedResults;
         }
 
-        if (!Array.isArray(this.attrs.suggest)) {
-            // No need to check for falsy, it was already done at the beginning
-            return [this.attrs.suggest];
-        }
-
-        if (this.attrs.suggest.length) {
+        if (Array.isArray(this.attrs.suggest)) {
             return this.attrs.suggest;
         }
 
-        return null;
+        // No need to check for falsy, it was already done at the beginning
+        return [this.attrs.suggest];
     }
 }
