@@ -4,6 +4,7 @@ import BackofficeNav from './components/BackofficeNav';
 import HeaderPrimary from './components/HeaderPrimary';
 import HeaderSecondary from './components/HeaderSecondary';
 import PermanentDeleteButton from './components/PermanentDeleteButton';
+import RichTextInput from './components/RichTextInput';
 import SearchInput from './components/SearchInput';
 import SoftDeleteButton from './components/SoftDeleteButton';
 import SubmitButton from './components/SubmitButton';
@@ -22,6 +23,7 @@ export const backoffice = {
     'components/HeaderPrimary': HeaderPrimary,
     'components/HeaderSecondary': HeaderSecondary,
     'components/PermanentDeleteButton': PermanentDeleteButton,
+    'components/RichTextInput': RichTextInput,
     'components/SearchInput': SearchInput,
     'components/SoftDeleteButton': SoftDeleteButton,
     'components/SubmitButton': SubmitButton,

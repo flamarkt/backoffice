@@ -5,6 +5,7 @@ export const backoffice: {
     'components/HeaderPrimary': typeof HeaderPrimary;
     'components/HeaderSecondary': typeof HeaderSecondary;
     'components/PermanentDeleteButton': typeof PermanentDeleteButton;
+    'components/RichTextInput': typeof RichTextInput;
     'components/SearchInput': typeof SearchInput;
     'components/SoftDeleteButton': typeof SoftDeleteButton;
     'components/SubmitButton': typeof SubmitButton;
@@ -21,6 +22,7 @@ import BackofficeNav from "./components/BackofficeNav";
 import HeaderPrimary from "./components/HeaderPrimary";
 import HeaderSecondary from "./components/HeaderSecondary";
 import PermanentDeleteButton from "./components/PermanentDeleteButton";
+import RichTextInput from "./components/RichTextInput";
 import SearchInput from "./components/SearchInput";
 import SoftDeleteButton from "./components/SoftDeleteButton";
 import SubmitButton from "./components/SubmitButton";

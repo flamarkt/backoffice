@@ -23,6 +23,8 @@ export default abstract class AbstractRelationshipSelect<T extends Model> extend
     onmousedown: (event: Event) => void;
     cachedSuggestedResults: T[] | null;
     suggestedPromiseLoaded: boolean;
+    shouldShowSuggestions: boolean;
+    afterSelectionCooldown: boolean;
     className(): string;
     abstract search(query: string): Promise<void>;
     abstract results(query: string): T[] | null;
