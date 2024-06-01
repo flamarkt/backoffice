@@ -4,7 +4,12 @@ import ExtensionPage from 'flarum/admin/components/ExtensionPage';
 import SessionDropdown from 'flarum/admin/components/SessionDropdown';
 import LinkButton from 'flarum/common/components/LinkButton';
 import Separator from 'flarum/common/components/Separator';
+import {common} from '../common/compat';
 import registerPatchInitializer from '../common/registerPatchInitializer';
+
+export {
+    common,
+};
 
 app.initializers.add('flamarkt-backoffice', () => {
     override(ExtensionPage.prototype, 'content', function (original) {
