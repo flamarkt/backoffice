@@ -13,6 +13,7 @@ return [
 
     (new Extend\Frontend('admin'))
         ->js(__DIR__ . '/js/dist/admin.js')
+        ->css(__DIR__ . '/resources/less/admin.less')
         ->content(Content\FilterAdminPayload::class),
 
     (new Extend\Frontend('backoffice'))
