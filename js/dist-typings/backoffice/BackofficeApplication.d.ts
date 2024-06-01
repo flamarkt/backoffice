@@ -16,4 +16,5 @@ export default class BackofficeApplication extends Application {
     set current(value: import("flarum/common/states/PageState").default);
     get previous(): import("flarum/common/states/PageState").default;
     set previous(value: import("flarum/common/states/PageState").default);
+    route(name: string, params?: Record<string, unknown>): string;
 }
