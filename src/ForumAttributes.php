@@ -17,8 +17,12 @@ class ForumAttributes
     public function __invoke(ForumSerializer $serializer): array
     {
         if ($serializer->getActor()->can('backoffice')) {
+            $url = $this->url->to('backoffice')->base();
+
             return [
-                'backofficeUrl' => $this->url->to('backoffice')->base(),
+                'backofficeUrl' => $url,
+                // Same logic as Flarum uses to generate basePath
+                'backofficePath' => parse_url($url, PHP_URL_PATH) ?: '',
             ];
         }
 

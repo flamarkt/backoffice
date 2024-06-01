@@ -13,7 +13,7 @@ app.initializers.add('flamarkt-backoffice', () => {
         }
 
         return m('.ExtensionPage-settings', m('.container', m('.Form-group', m('a.Button', {
-            href: '/backoffice/extension/' + this.extension.id,
+            href: app.forum.attribute('backofficeUrl') + '/extension/' + this.extension.id,
         }, app.translator.trans('flamarkt-backoffice.admin.settingsInBackoffice')))));
     });
 

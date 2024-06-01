@@ -66,8 +66,8 @@ export default class BackofficeApplication extends Application {
         this.routes[defaultAction].path = '/';
         //this.history.push(defaultAction, this.translator.trans('core.forum.header.back_to_index_tooltip'), '/');
 
-        m.route.prefix = '/backoffice';
-        super.mount(this.forum.attribute('basePath'));
+        m.route.prefix = '';
+        super.mount(this.forum.attribute('backofficePath'));
 
         m.mount(document.getElementById('app-navigation'), {
             view: () =>
@@ -115,5 +115,15 @@ export default class BackofficeApplication extends Application {
 
     set previous(value) {
         app.previous = value;
+    }
+
+    route(name: string, params?: Record<string, unknown>): string {
+        // The original implementation always uses basePath as prefix, but we need to switch that variable when in backoffice
+        let route = super.route(name, params);
+
+        // We know the prefix will always be the first part of the string and that it's pulled from this forum attribute
+        route = route.substring((this.forum.attribute<string>('basePath') || '').length);
+
+        return this.forum.attribute('backofficePath') + route;
     }
 }
